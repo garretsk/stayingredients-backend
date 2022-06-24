@@ -51,6 +51,11 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log('Server up and running on port ' + port));
 
+// API call to wake Heroku Server
+app.get("/wake", function (req, res) {
+  res.json("server awake/waking");
+});
+
 // Transporter middleware
 app.use(express.json());
 app.use(cors());
