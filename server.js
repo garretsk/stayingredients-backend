@@ -88,7 +88,9 @@ app.post("/contact", function (req, res) {
   };
 
   let confirmationText;
-  confirmationText = "Your message has been recieved and we will get back to you as soon as possible."
+  confirmationText = "Your message has been recieved and we will get back to you as soon as possible." + "\n" + "\n";
+  confirmationText += "\t" + "Your message: " + "\n";
+  confirmationText += "\t" + "\"" + req.body.message + "\"";
 
   let contactConfirmationMailOptions = {
     from: process.env.EMAIL,
