@@ -75,28 +75,45 @@ transporter.verify((err, success) => {
 });
 
 app.post("/contact", function (req, res) {
-  let text;
-  text = "Sender: " + req.body.fname + " " + req.body.lname + "\n";
-  text += "Email: " + req.body.email + "\n\n";
-  text += req.body.message;
+  let contactText;
+  contactText = "Sender: " + req.body.fname + " " + req.body.lname + "\n";
+  contactText += "Email: " + req.body.email + "\n\n";
+  contactText += req.body.message;
 
-  let mailOptions = {
+  let contactMailOptions = {
     from: `${req.body.email}`,
     to: process.env.EMAIL,
     subject: `Message from: ${req.body.fname}`,
-    text: text,
+    text: contactText,
   };
 
-  transporter.sendMail(mailOptions, function (err, data) {
-  if (err) {
-    console.log("Error " + err);
-    res.json({
-      status: "fail",
-    });
-  }
-  else {
-    console.log("Message sent successfully");
-    res.json({ status: "success" });
-  }
+  let confirmationText;
+  confirmationText = "Your message has been recieved and we will get back to you as soon as possible."
+
+  let contactConfirmationMailOptions = {
+    from: process.env.EMAIL,
+    to: `${req.body.email}`,
+    subject: "StayInGredients: Your message has been recieved",
+    text: confirmationText,
+  };
+
+  transporter.sendMail(contactMailOptions, function (err, data) {
+    if (err) {
+      console.log("Contact message error " + err);
+      res.json({ status: "fail" });
+    }
+    else {
+      console.log("Message sent successfully");
+      res.json({ status: "success" });
+
+      transporter.sendMail(contactConfirmationMailOptions, function (err, data) {
+        if (err) {
+          console.log("Confirmation message error " + err);
+        }
+        else {
+          console.log("Confirmation sent successfully");
+        }
+      });
+    }
   });
 });
